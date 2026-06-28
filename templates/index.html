@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMA² | Unemployment Analysis System</title>
+    
+    <!-- KMA2 Required Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+</head>
+<body class="kma-dark-theme">
+
+    <!-- KMA² Startup Sequence -->
+    <div id="startup-screen">
+        <div class="startup-content">
+            <img src="{{ url_for('static', filename='assets/KMA2 Silver Logo.jpeg') }}" alt="K.M.A² Logo" class="kma-logo">
+            <div class="startup-headers">
+                <h1 class="fade-text delay-0">K. M. A<sup>2</sup></h1>
+                <h2 class="fade-text delay-1" style="color:#D4AF37;">KMA<sup>2</sup> Signature Series</h2>
+                <h3 class="fade-text delay-2" style="color:#707070;">Advanced System Interface</h3>
+            </div>
+        </div>
+        <div class="bottom-branding fade-text delay-4">
+            <div class="rotating-text" id="loading-msg" style="margin-bottom: 5px;">Initializing Engine...</div>
+            <div class="loading-bar-container">
+                <div class="loading-bar" id="progress-bar"></div>
+            </div>
+            <p id="powered-by-text" style="color:#4A90E2;">Powered by KMA<sup>2</sup> Technologies</p>
+            <p>Running on KMA<sup>2</sup> Intelligence Framework</p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="main-dashboard" style="display: none; opacity: 0; transition: opacity 1s;">
+        
+        <!-- K.M.A² Signature Series Locked Header Layout v1.0 -->
+        <!-- DO NOT MODIFY: Layout, sizing, alignment, or structure are locked. -->
+        <nav class="navbar kma-premium-header">
+            <div class="container-fluid d-flex justify-content-between align-items-center flex-nowrap">
+                <!-- Left Section -->
+                <div class="header-left d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='assets/KMA2 Silver Logo.jpeg') }}" alt="Logo" class="kma-header-logo me-3">
+                    <div class="header-titles">
+                        <h1 class="premium-title">Advanced Unemployment Intelligence System</h1>
+                        <h2 class="premium-subtitle">Powered by the K.M.A² Intelligence Framework</h2>
+                        <h3 class="premium-signature-text">K.M.A² Signature Series Project</h3>
+                    </div>
+                </div>
+
+                <!-- Right Section -->
+                <div class="header-right d-flex align-items-center">
+                    <div class="signature-badge-red me-3" id="signatureSeriesBtn">
+                        <i class="fas fa-crown signature-crown me-2"></i>K.M.A² Signature Series
+                    </div>
+                    <button class="settings-btn" id="settingsBtn" aria-label="Settings">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid mt-4">
+            <div class="row">
+                <!-- Sidebar Modules -->
+                <div class="col-md-3 col-lg-2 sidebar-wrapper">
+                    <div class="nav flex-column nav-pills me-3 kma-nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <button class="nav-link active" id="tab-upload" data-bs-toggle="pill" data-bs-target="#panel-upload" type="button" role="tab">1. Dataset Mgmt</button>
+                        <button class="nav-link disabled" id="tab-clean" data-bs-toggle="pill" data-bs-target="#panel-clean" type="button" role="tab">2. Data Cleaning</button>
+                        <button class="nav-link disabled" id="tab-eda" data-bs-toggle="pill" data-bs-target="#panel-eda" type="button" role="tab">3. EDA Center</button>
+                        <button class="nav-link disabled" id="tab-viz" data-bs-toggle="pill" data-bs-target="#panel-viz" type="button" role="tab">4. Visualization Center</button>
+                        <button class="nav-link disabled" id="tab-covid" data-bs-toggle="pill" data-bs-target="#panel-covid" type="button" role="tab">5. COVID-19 Impact</button>
+                        <button class="nav-link disabled" id="tab-insights" data-bs-toggle="pill" data-bs-target="#panel-insights" type="button" role="tab">6. Insight Engine</button>
+                        <button class="nav-link disabled" id="tab-ai-exec" data-bs-toggle="pill" data-bs-target="#panel-ai-exec" type="button" role="tab">7. AI Exec Insights</button>
+                        <button class="nav-link disabled" id="tab-simulate" data-bs-toggle="pill" data-bs-target="#panel-simulate" type="button" role="tab">8. Scenario Simulator</button>
+                        <button class="nav-link disabled" id="tab-ranking" data-bs-toggle="pill" data-bs-target="#panel-ranking" type="button" role="tab">9. State Ranking</button>
+                        <button class="nav-link disabled" id="tab-policy" data-bs-toggle="pill" data-bs-target="#panel-policy" type="button" role="tab">10. Policy & Recs</button>
+                        <button class="nav-link disabled" id="tab-early-warning" data-bs-toggle="pill" data-bs-target="#panel-early-warning" type="button" role="tab">11. Early Warning</button>
+                        <button class="nav-link disabled" id="tab-policy-lab" data-bs-toggle="pill" data-bs-target="#panel-policy-lab" type="button" role="tab">12. AI Policy Decision Lab</button>
+                        <button class="nav-link disabled" id="tab-report" data-bs-toggle="pill" data-bs-target="#panel-report" type="button" role="tab">13. Final Report</button>
+                        <button class="nav-link disabled fw-bold exec-nav-btn" id="tab-command-center" data-bs-toggle="pill" data-bs-target="#panel-command-center" type="button" role="tab"><i class="fas fa-crown me-2"></i>14. Exec Command Center</button>
+                    </div>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="col-md-9 col-lg-10 content-wrapper">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        
+                        <!-- Panel 1: Upload -->
+                        <div class="tab-pane fade show active" id="panel-upload" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-file-csv text-gold"></i> Dataset Management</h2>
+                            <div class="card glass-card p-4">
+                                <h5>Upload CSV Dataset</h5>
+                                <form id="uploadForm" class="mt-3">
+                                    <div class="mb-3">
+                                        <input class="form-control bg-dark text-light border-secondary" type="file" id="csvFile" accept=".csv">
+                                    </div>
+                                    <button type="submit" class="btn btn-kma-gold" id="btnUpload">
+                                        <i class="fas fa-upload me-2"></i> Upload & Initialize
+                                    </button>
+                                </form>
+                                <div id="uploadAlert" class="mt-3" style="display: none;"></div>
+                            </div>
+
+                            <div id="datasetInfo" class="card glass-card p-4 mt-4" style="display: none;">
+                                <h5>Dataset Information</h5>
+                                <div class="row text-center mt-3">
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <h3 id="infoRows" class="text-gold">0</h3>
+                                            <p>Total Rows</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <h3 id="infoCols" class="text-gold">0</h3>
+                                            <p>Total Columns</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <h3 id="infoStatus" class="text-success">Verified</h3>
+                                            <p>Status</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-light mt-4 w-100" onclick="document.getElementById('tab-clean').click()" style="font-size: 1.2rem; font-weight: bold;">Proceed to Data Cleaning <i class="fas fa-arrow-right"></i></button>
+                            </div>
+
+                            <div id="datasetPreview" class="card glass-card p-4 mt-4 table-responsive" style="display: none;">
+                                <h5>Dataset Preview (Top 5 Rows)</h5>
+                                <div id="previewTableContainer" class="mt-3" style="font-size: 1.15rem;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 2: Clean -->
+                        <div class="tab-pane fade" id="panel-clean" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-broom text-gold"></i> Data Cleaning</h2>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4">
+                                        <h5>Pre-Cleaning Diagnostics</h5>
+                                        <ul class="list-group list-group-flush mt-3 kma-list" id="diagnosticList">
+                                            <li class="list-group-item">Scanning...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 text-center h-100 d-flex justify-content-center align-items-center">
+                                        <button id="btnClean" class="btn btn-lg btn-kma-gold rounded-pill px-5 py-3 shadow-lg">
+                                            <i class="fas fa-magic me-2"></i> Execute Cleaning Pipeline
+                                        </button>
+                                        <p class="mt-3 text-muted" id="cleanStatusText">Removes NA values, drops duplicates, formats Dates.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 3: EDA -->
+                        <div class="tab-pane fade" id="panel-eda" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-chart-pie text-gold"></i> Exploratory Data Analysis</h2>
+                            <div class="row g-4" id="edaCards">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Panel 4: Viz -->
+                        <div class="tab-pane fade" id="panel-viz" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-chart-area text-gold"></i> Visualization Center</h2>
+                            <div class="row g-5">
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_monthly_trend" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>This chart visualizes the overall monthly unemployment trend across India over time, indicating the broader macroeconomic stability or distress periods.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_state_bar" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>This chart compares average unemployment levels across states, highlighting regional disparities and specific states experiencing severe labour market stress.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_regional_comp" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>Analyzes the rural vs. urban or regional split, showcasing how geography influences employment opportunities and joblessness rates.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_top_10_high" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>A focused view on the 10 states bearing the highest unemployment burden, requiring immediate economic intervention.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_top_10_low" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>Highlights the 10 best-performing states with the lowest unemployment rates, serving as potential models for stable employment policies.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_labour_part" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>Demonstrates the workforce engagement by showing the proportion of the working-age population actively seeking or holding employment.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_employment_dist" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>Illustrates where the absolute number of employed individuals is concentrated, reflecting the scale of regional economies.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_heatmap" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>Provides a dense, color-coded matrix tracking how the severity of unemployment shifts month by month across all states.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="card glass-card p-4">
+                                        <div id="plot_correlation" class="plotly-graph"></div>
+                                        <hr class="border-secondary mt-4">
+                                        <div class="mt-3">
+                                            <h5 class="text-gold"><i class="fas fa-info-circle me-2"></i> Key Observation</h5>
+                                            <p>Identifies the statistical relationship between employment, unemployment rates, and labour participation, revealing underlying systemic dynamics.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 5: COVID -->
+                        <div class="tab-pane fade" id="panel-covid" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-virus text-gold"></i> COVID-19 Impact Analysis</h2>
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 text-center border-left-gold">
+                                        <h6>Pre-COVID Avg</h6>
+                                        <h2 id="covid_pre" class="text-success">0%</h2>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 text-center border-left-red">
+                                        <h6>During COVID Avg</h6>
+                                        <h2 id="covid_during" class="text-danger">0%</h2>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 text-center border-left-blue">
+                                        <h6>Increase</h6>
+                                        <h2 id="covid_inc" class="text-warning">0%</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card glass-card p-2 mb-4">
+                                <div id="plot_covid_trend" class="plotly-graph" style="height: 500px;"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-3 text-center border-danger">
+                                        <h6>Most Affected State</h6>
+                                        <h3 id="covid_most_affected" class="text-light">N/A</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-3 text-center border-success">
+                                        <h6>Least Affected State</h6>
+                                        <h3 id="covid_least_affected" class="text-light">N/A</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 6: Insights -->
+                        <div class="tab-pane fade" id="panel-insights" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-lightbulb text-gold"></i> Insight Engine</h2>
+                            <div class="row g-4" id="insightCards">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Panel 7: AI Exec Insights -->
+                        <div class="tab-pane fade" id="panel-ai-exec" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-microchip text-gold"></i> AI Executive Insight Engine</h2>
+                            
+                            <div class="row g-4 mb-4">
+                                <!-- Executive Summary & Confidence -->
+                                <div class="col-12">
+                                    <div class="card glass-card p-4" style="box-shadow: 0 0 15px rgba(220, 38, 38, 0.2);">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="gold-text m-0"><i class="fas fa-file-alt me-2 text-white"></i> Executive Summary</h4>
+                                            <div class="d-flex align-items-center">
+                                                <span class="me-2 text-light" style="font-size: 0.9rem;">Confidence:</span>
+                                                <div class="progress" style="width: 100px; height: 10px; background-color: rgba(255,255,255,0.1);">
+                                                    <div class="progress-bar bg-success" id="aiConfidenceBar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span class="ms-2 gold-text fw-bold" id="aiConfidenceText">0%</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-light" id="aiExecSummary" style="font-size: 1.1rem; line-height: 1.6;">Generating analysis...</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Key Findings -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100">
+                                        <h4 class="gold-text mb-4"><i class="fas fa-search me-2 text-white"></i> Key Findings</h4>
+                                        <ul class="list-group list-group-flush kma-list" id="aiKeyFindings">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">Loading...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <!-- Recommended Actions -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100">
+                                        <h4 class="blue-text mb-4"><i class="fas fa-tasks me-2 text-white"></i> Recommended Actions</h4>
+                                        <ul class="list-group list-group-flush kma-list" id="aiRecommendedActions">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">Loading...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 8: Scenario Simulator -->
+                        <div class="tab-pane fade" id="panel-simulate" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-sliders-h text-gold"></i> AI Scenario Simulator (What-If Analysis)</h2>
+                            
+                            <div class="row g-4 mb-4">
+                                <!-- Input Panel -->
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-4 h-100 border-left-gold">
+                                        <h4 class="gold-text mb-4"><i class="fas fa-sliders-h me-2 text-white"></i> Simulation Parameters</h4>
+                                        <form id="simulationForm">
+                                            <div class="mb-3">
+                                                <label class="form-label text-light">Unemployment Rate (%)</label>
+                                                <input type="number" class="form-control kma-input" id="simUnemployment" step="0.01" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-light">Employment Population</label>
+                                                <input type="number" class="form-control kma-input" id="simEmployed" step="1" required>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label class="form-label text-light">Labour Participation Rate (%)</label>
+                                                <input type="number" class="form-control kma-input" id="simParticipation" step="0.01" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-kma-gold w-100" id="btnSimulate">
+                                                <i class="fas fa-brain me-2"></i> Run AI Simulation
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                
+                                <!-- Results Panel -->
+                                <div class="col-md-8">
+                                    <div class="row g-3 h-100">
+                                        <!-- Overall Risk & Summary -->
+                                        <div class="col-md-6">
+                                            <div class="card glass-card p-4 text-center h-100" id="simRiskCard">
+                                                <h5 class="text-light mb-3">Overall Risk Level</h5>
+                                                <h2 id="simRiskLevel" class="mb-3 text-muted">Awaiting Input</h2>
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                    <span class="me-2 text-light" style="font-size: 0.9rem;">AI Confidence:</span>
+                                                    <div class="progress flex-grow-1" style="height: 10px; background-color: rgba(255,255,255,0.1); max-width: 150px;">
+                                                        <div class="progress-bar bg-success" id="simConfidenceBar" role="progressbar" style="width: 0%;"></div>
+                                                    </div>
+                                                    <span class="ms-2 gold-text fw-bold" id="simConfidenceText">0%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Smart Comparison -->
+                                        <div class="col-md-6">
+                                            <div class="card glass-card p-4 h-100">
+                                                <h5 class="gold-text mb-3 text-center"><i class="fas fa-balance-scale me-2 text-white"></i> Smart Comparison</h5>
+                                                <div class="d-flex justify-content-between text-light mb-2">
+                                                    <span>Unemployment:</span>
+                                                    <span id="simCompUnemp" class="fw-bold">--</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between text-light mb-2">
+                                                    <span>Employment:</span>
+                                                    <span id="simCompEmp" class="fw-bold">--</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between text-light">
+                                                    <span>Participation:</span>
+                                                    <span id="simCompPart" class="fw-bold">--</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- AI Interpretation -->
+                                        <div class="col-12">
+                                            <div class="card glass-card p-4">
+                                                <h5 class="blue-text mb-3"><i class="fas fa-robot me-2 text-white"></i> AI Interpretation</h5>
+                                                <p class="text-light m-0" id="simInterpretation" style="line-height: 1.6;">Enter parameters and run simulation to generate insights.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Policy Recommendations & Scenario Summary -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100 border-left-red">
+                                        <h5 class="gold-text mb-4"><i class="fas fa-bullseye me-2 text-white"></i> Policy Recommendation Engine</h5>
+                                        <ul class="list-group list-group-flush kma-list" id="simRecommendations">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">Awaiting simulation data...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100 border-left-blue">
+                                        <h5 class="blue-text mb-4"><i class="fas fa-clipboard-list me-2 text-white"></i> Scenario Summary</h5>
+                                        <ul class="list-group list-group-flush kma-list" id="simSummaryList">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">Awaiting simulation data...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 9: State Ranking -->
+                        <div class="tab-pane fade" id="panel-ranking" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-trophy text-gold"></i> AI State Performance Ranking</h2>
+                            
+                            <div class="row g-4 mb-4">
+                                <!-- Top 5 Best -->
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-4 h-100 border-left-gold">
+                                        <h5 class="gold-text mb-3"><i class="fas fa-medal me-2 text-white"></i> Top 5 Best Performers</h5>
+                                        <ul class="list-group list-group-flush kma-list" id="rankingTopBest">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">Loading...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <!-- Top 5 Worst -->
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-4 h-100 border-left-red">
+                                        <h5 class="text-danger mb-3"><i class="fas fa-exclamation-triangle me-2 text-white"></i> Needs Immediate Attention</h5>
+                                        <ul class="list-group list-group-flush kma-list" id="rankingTopWorst">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">Loading...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <!-- AI Insights -->
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-4 h-100 border-left-blue">
+                                        <h5 class="blue-text mb-3"><i class="fas fa-brain me-2 text-white"></i> AI Observations</h5>
+                                        <div id="rankingInsights" class="text-light" style="line-height: 1.5; font-size: 0.95rem;">
+                                            Loading insights...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Filter & Search Row -->
+                            <div class="row g-3 mb-4 align-items-end">
+                                <div class="col-md-4">
+                                    <label class="form-label text-light fw-bold-fix">Smart Filter</label>
+                                    <select class="form-select kma-input" id="rankingFilter">
+                                        <option value="score_desc">Highest AI Score (Best Performance)</option>
+                                        <option value="score_asc">Lowest AI Score (Worst Performance)</option>
+                                        <option value="unemp_desc">Highest Unemployment</option>
+                                        <option value="unemp_asc">Lowest Unemployment</option>
+                                        <option value="part_desc">Highest Labour Participation</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-light fw-bold-fix">Search State</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent border-secondary text-gold"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control kma-input" id="rankingSearch" placeholder="Type a state name...">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Leaderboard Table -->
+                            <div class="card glass-card p-0 overflow-hidden">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover mb-0 kma-table align-middle text-center" id="rankingTable">
+                                        <thead>
+                                            <tr class="text-gold">
+                                                <th><i class="fas fa-hashtag me-1"></i> Rank</th>
+                                                <th class="text-start"><i class="fas fa-map-marker-alt me-1"></i> State Name</th>
+                                                <th><i class="fas fa-chart-line me-1"></i> Avg Unemp. (%)</th>
+                                                <th><i class="fas fa-users me-1"></i> Employment</th>
+                                                <th><i class="fas fa-handshake me-1"></i> Labour Part. (%)</th>
+                                                <th><i class="fas fa-star me-1"></i> AI Score</th>
+                                                <th><i class="fas fa-shield-alt me-1"></i> Overall Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rankingTableBody">
+                                            <tr>
+                                                <td colspan="7" class="py-4">Generate insights to view rankings...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 10: Policy -->
+                        <div class="tab-pane fade" id="panel-policy" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-landmark text-gold"></i> Policy & Recommendations Center</h2>
+                            <div class="row g-4" id="policyCards">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Panel 11: Early Warning Engine -->
+                        <div class="tab-pane fade" id="panel-early-warning" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-exclamation-triangle text-gold"></i> AI Early Warning & Hotspot Prediction Engine</h2>
+                            
+                            <div class="row g-4 mb-4">
+                                <!-- National Risk Indicator -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100 text-center border-left-red">
+                                        <h5 class="text-light mb-3">Overall National Risk Indicator</h5>
+                                        <h2 id="ewNationalRisk" class="mb-3 text-muted">Awaiting Analysis</h2>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-2 text-light" style="font-size: 0.9rem;">AI Confidence:</span>
+                                            <div class="progress flex-grow-1" style="height: 10px; background-color: rgba(255,255,255,0.1); max-width: 150px;">
+                                                <div class="progress-bar bg-success" id="ewConfidenceBar" role="progressbar" style="width: 0%;"></div>
+                                            </div>
+                                            <span class="ms-2 gold-text fw-bold" id="ewConfidenceText">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- AI Explanation Panel -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100 border-left-gold">
+                                        <h5 class="gold-text mb-3"><i class="fas fa-robot me-2 text-white"></i> AI Early Warning Summary</h5>
+                                        <p class="text-light m-0" id="ewExplanation" style="line-height: 1.6;">Generating early warning patterns...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Risk Category Distribution -->
+                            <div class="row g-3 mb-4 text-center">
+                                <div class="col-md-3">
+                                    <div class="card glass-card p-3 border-bottom border-danger border-3">
+                                        <h6 class="text-light">Critical Intervention</h6>
+                                        <h3 class="text-danger mb-0" id="ewCountRed">0</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card glass-card p-3 border-bottom border-warning border-3">
+                                        <h6 class="text-light">High-Risk</h6>
+                                        <h3 class="text-warning mb-0" id="ewCountOrange">0</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card glass-card p-3 border-bottom border-info border-3">
+                                        <h6 class="text-light">Emerging Concern</h6>
+                                        <h3 class="text-info mb-0" id="ewCountYellow">0</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card glass-card p-3 border-bottom border-success border-3">
+                                        <h6 class="text-light">Stable Outlook</h6>
+                                        <h3 class="text-success mb-0" id="ewCountGreen">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-4 mb-4">
+                                <!-- Top 5 Priority States -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100 border-left-red">
+                                        <h5 class="text-danger mb-3"><i class="fas fa-fire-alt me-2 text-white"></i> Emerging Hotspot Detection (Top 5)</h5>
+                                        <ul class="list-group list-group-flush kma-list" id="ewTopPriority">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">Loading hotspots...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <!-- Preventive Recommendations -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100 border-left-blue">
+                                        <h5 class="blue-text mb-3"><i class="fas fa-shield-alt me-2 text-white"></i> Preventive Recommendations</h5>
+                                        <ul class="list-group list-group-flush kma-list" id="ewRecommendations">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">Loading recommendations...</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Priority Intervention Queue Table -->
+                            <div class="card glass-card p-0 overflow-hidden">
+                                <div class="card-header bg-transparent border-secondary p-3">
+                                    <h5 class="gold-text m-0"><i class="fas fa-list-ol me-2 text-white"></i> Full Priority Intervention Queue</h5>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover mb-0 kma-table align-middle text-center">
+                                        <thead>
+                                            <tr class="text-gold">
+                                                <th class="text-start"><i class="fas fa-map-marker-alt me-1"></i> State Name</th>
+                                                <th><i class="fas fa-chart-line me-1"></i> Avg Unemp. (%)</th>
+                                                <th><i class="fas fa-arrow-up me-1"></i> Max Unemp. (%)</th>
+                                                <th><i class="fas fa-exclamation-circle me-1"></i> Risk Category</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ewFullQueueTable">
+                                            <tr>
+                                                <td colspan="4" class="py-4">Generating intervention queue...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 12: AI Policy Decision Lab -->
+                        <div class="tab-pane fade" id="panel-policy-lab" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-balance-scale text-gold"></i> AI Policy Impact Simulator & Decision Lab</h2>
+                            
+                            <!-- Policy Selection -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div class="card glass-card p-4 border-left-gold">
+                                        <h5 class="gold-text mb-3"><i class="fas fa-tasks me-2 text-white"></i> Select Policy for Simulation</h5>
+                                        <select class="form-select bg-dark text-light border-secondary shadow-none" id="policyLabSelect" onchange="updatePolicyLabDashboard()">
+                                            <option value="" disabled selected>Loading policies...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- AI Impact Dashboard -->
+                            <div class="row g-3 mb-4 text-center">
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 border-bottom border-success border-3">
+                                        <h6 class="text-light">Est. Unemployment Reduction</h6>
+                                        <h3 class="text-success mb-0 fw-bold-fix" id="plUnempReduction">0%</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 border-bottom border-info border-3">
+                                        <h6 class="text-light">Employment Growth Potential</h6>
+                                        <h3 class="text-info mb-0 fw-bold-fix" id="plEmpGrowth">0</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 border-bottom border-warning border-3">
+                                        <h6 class="text-light">Economic Investment Req.</h6>
+                                        <h3 class="text-warning mb-0 fw-bold-fix text-dark" id="plInvestment">$0</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 border-bottom border-primary border-3">
+                                        <h6 class="text-light">Implementation Timeline</h6>
+                                        <h3 class="text-primary mb-0 fw-bold-fix" id="plTimeline">0 Months</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 border-bottom border-gold border-3">
+                                        <h6 class="text-light">National Impact Score</h6>
+                                        <h3 class="gold-text mb-0 fw-bold-fix" id="plImpactScore">0/100</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-3 border-bottom border-danger border-3">
+                                        <h6 class="text-light">AI Confidence</h6>
+                                        <h3 class="text-danger mb-0 fw-bold-fix" id="plConfidence">0%</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-4 mb-4">
+                                <!-- AI Executive Interpretation -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100 border-left-blue">
+                                        <h5 class="blue-text mb-3"><i class="fas fa-brain me-2 text-white"></i> AI Executive Interpretation</h5>
+                                        <div class="text-light" style="line-height: 1.6;">
+                                            <p><strong><i class="fas fa-question-circle text-info me-2"></i> Why Recommended:</strong> <span id="plExplainWhy">Select a policy to view analysis.</span></p>
+                                            <p><strong><i class="fas fa-plus-circle text-success me-2"></i> Expected Benefits:</strong> <span id="plExplainBenefits">-</span></p>
+                                            <p><strong><i class="fas fa-minus-circle text-danger me-2"></i> Possible Limitations:</strong> <span id="plExplainLimits">-</span></p>
+                                            <p><strong><i class="fas fa-chart-line text-warning me-2"></i> Long-Term Impact:</strong> <span id="plExplainLongTerm">-</span></p>
+                                            <hr class="border-secondary">
+                                            <p class="mb-0"><strong><i class="fas fa-star text-gold me-2"></i> Overall Recommendation:</strong> <span id="plExplainRec" class="gold-text fw-bold">-</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Strategic Recommendation Panel -->
+                                <div class="col-md-6">
+                                    <div class="card glass-card p-4 h-100 border-left-red">
+                                        <h5 class="text-danger mb-3"><i class="fas fa-bullseye me-2 text-white"></i> Strategic Action Plan</h5>
+                                        <ul class="list-group list-group-flush kma-list">
+                                            <li class="list-group-item bg-transparent text-light border-secondary">
+                                                <strong><i class="fas fa-bolt text-warning me-2"></i> Immediate Action:</strong> <span id="plStratImm">-</span>
+                                            </li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary">
+                                                <strong><i class="fas fa-calendar-alt text-info me-2"></i> Short-Term (0-6 mo):</strong> <span id="plStratShort">-</span>
+                                            </li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary">
+                                                <strong><i class="fas fa-calendar-check text-success me-2"></i> Long-Term Strategy:</strong> <span id="plStratLong">-</span>
+                                            </li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary">
+                                                <strong><i class="fas fa-money-bill-wave text-success me-2"></i> Budget Consideration:</strong> <span id="plStratBudget">-</span>
+                                            </li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary">
+                                                <strong><i class="fas fa-users text-primary me-2"></i> Workforce Development:</strong> <span id="plStratWorkforce">-</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Comparative Policy Ranking Table -->
+                            <div class="card glass-card p-0 overflow-hidden">
+                                <div class="card-header bg-transparent border-secondary p-3">
+                                    <h5 class="gold-text m-0"><i class="fas fa-list-ol me-2 text-white"></i> Comparative Policy Ranking (Highest Impact)</h5>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover mb-0 kma-table align-middle text-center">
+                                        <thead>
+                                            <tr class="text-gold">
+                                                <th>Rank</th>
+                                                <th class="text-start">Policy Name</th>
+                                                <th>AI Impact Score</th>
+                                                <th>Est. Emp. Growth</th>
+                                                <th>Priority Level</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="plComparativeTable">
+                                            <tr>
+                                                <td colspan="5" class="py-4">Generating rankings...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 8: Report -->
+                        <div class="tab-pane fade" id="panel-report" role="tabpanel">
+                            <h2 class="section-title"><i class="fas fa-file-signature text-gold"></i> Final Executive Report</h2>
+                            <div class="card glass-card p-5" id="printableReport">
+                                <div class="text-center mb-5 border-bottom border-secondary pb-4">
+                                    <h1 style="font-family: 'Orbitron', sans-serif; color: #D4AF37;">K.M.A² Intelligence</h1>
+                                    <h2>Unemployment Analysis Executive Summary</h2>
+                                    <p class="text-muted">Generated Automatically by KMA² System</p>
+                                </div>
+                                <div id="reportContent">
+                                    <!-- Populated by JS upon switching to this tab -->
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button class="btn btn-kma-gold" onclick="window.print()"><i class="fas fa-print me-2"></i> Print / Export to PDF</button>
+                            </div>
+                        </div>
+
+                        <!-- Panel 14: Exec Command Center -->
+                        <div class="tab-pane fade" id="panel-command-center" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="section-title m-0"><i class="fas fa-chess-king text-gold"></i> AI Executive Command Center</h2>
+                                <button class="signature-badge-red" id="execAccessBtn" style="border: none; outline: none; padding: 10px 15px; font-size: 1rem;"><i class="fas fa-lock signature-crown me-2"></i>Executive Access Only</button>
+                            </div>
+
+                            <!-- 1. Executive KPI Header -->
+                            <div class="row g-3 mb-4 text-center">
+                                <div class="col-md-2 col-sm-4"><div class="card glass-card p-3 border-left-gold"><h6 class="text-muted" style="font-size:0.8rem;">AI Health Score</h6><h4 class="text-gold fw-bold-fix m-0" id="ccHealthScore">-</h4></div></div>
+                                <div class="col-md-2 col-sm-4"><div class="card glass-card p-3"><h6 class="text-muted" style="font-size:0.8rem;">Dataset Quality</h6><h4 class="text-info fw-bold-fix m-0" id="ccDatasetQuality">-</h4></div></div>
+                                <div class="col-md-2 col-sm-4"><div class="card glass-card p-3"><h6 class="text-muted" style="font-size:0.8rem;">AI Confidence</h6><h4 class="text-success fw-bold-fix m-0" id="ccConfidence">-</h4></div></div>
+                                <div class="col-md-2 col-sm-4"><div class="card glass-card p-3"><h6 class="text-muted" style="font-size:0.8rem;">National Risk</h6><h4 id="ccNationalRisk" class="text-light fw-bold-fix m-0">-</h4></div></div>
+                                <div class="col-md-2 col-sm-4"><div class="card glass-card p-3"><h6 class="text-muted" style="font-size:0.8rem;">States Analysed</h6><h4 class="text-primary fw-bold-fix m-0" id="ccTotalStates">-</h4></div></div>
+                                <div class="col-md-2 col-sm-4"><div class="card glass-card p-3 border-left-blue">
+                                    <div class="stat-box h-100">
+                                        <p class="text-muted m-0 small text-uppercase">Active Dataset</p>
+                                        <h6 class="text-light m-0 mt-1 fw-bold-fix" style="word-wrap: break-word; white-space: normal;" id="ccDatasetName" title="Dataset Name">-</h6>
+                                    </div>
+                                </div></div>
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <!-- 6. Executive Readiness Meter -->
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-4 h-100 text-center d-flex flex-column justify-content-center border-left-gold">
+                                        <h5 class="gold-text mb-3"><i class="fas fa-tachometer-alt me-2 text-white"></i> Readiness Meter</h5>
+                                        <div class="position-relative d-inline-block mx-auto mb-3" style="width: 150px; height: 150px;">
+                                            <svg viewBox="0 0 36 36" class="circular-chart" style="width:100%; height:100%;">
+                                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3"></path>
+                                                <path id="ccReadinessCircle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#2ECC71" stroke-width="3" style="transition: stroke-dasharray 1s ease-out;"></path>
+                                            </svg>
+                                            <div class="position-absolute top-50 start-50 translate-middle text-center w-100">
+                                                <h3 class="m-0 fw-bold-fix" id="ccReadinessScore" style="color: #2ECC71; font-size: 2rem;">0</h3>
+                                            </div>
+                                        </div>
+                                        <h4 id="ccReadinessLevel" class="fw-bold-fix m-0" style="color: #2ECC71; letter-spacing: 1px;">Calculating...</h4>
+                                    </div>
+                                </div>
+
+                                <!-- 2. Executive Intelligence Summary -->
+                                <div class="col-md-8">
+                                    <div class="card glass-card p-4 h-100 border-left-blue">
+                                        <h5 class="blue-text mb-4"><i class="fas fa-brain me-2 text-white"></i> Executive Intelligence Summary</h5>
+                                        <div class="row g-4">
+                                            <div class="col-md-6">
+                                                <p class="text-light mb-1 fw-bold-fix" style="font-size: 0.9rem;"><i class="fas fa-info-circle text-info me-2"></i> Current Situation:</p>
+                                                <p class="text-muted ms-4 mb-0" id="ccIntelSituation">-</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="text-light mb-1 fw-bold-fix" style="font-size: 0.9rem;"><i class="fas fa-check-circle text-success me-2"></i> Strongest Findings:</p>
+                                                <p class="text-muted ms-4 mb-0" id="ccIntelStrongest">-</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="text-light mb-1 fw-bold-fix" style="font-size: 0.9rem;"><i class="fas fa-exclamation-triangle text-danger me-2"></i> Highest Concerns:</p>
+                                                <p class="text-muted ms-4 mb-0" id="ccIntelConcerns">-</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="text-light mb-1 fw-bold-fix" style="font-size: 0.9rem;"><i class="fas fa-star text-gold me-2"></i> Best Region:</p>
+                                                <p class="text-muted ms-4 mb-0" id="ccIntelBest">-</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="text-light mb-1 fw-bold-fix" style="font-size: 0.9rem;"><i class="fas fa-radiation text-danger me-2"></i> Critical Region:</p>
+                                                <p class="text-muted ms-4 mb-0" id="ccIntelCritical">-</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="text-light mb-1 fw-bold-fix" style="font-size: 0.9rem;"><i class="fas fa-lightbulb text-warning me-2"></i> Recommendation:</p>
+                                                <p class="text-muted ms-4 mb-0" id="ccIntelRec">-</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <!-- 5. Executive Achievement Panel -->
+                                <div class="col-md-4">
+                                    <div class="card glass-card p-4 h-100">
+                                        <h5 class="gold-text mb-3"><i class="fas fa-trophy me-2 text-white"></i> Executive Achievement Panel</h5>
+                                        <ul class="list-group list-group-flush kma-list" style="font-size: 0.9rem;">
+                                            <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center py-3"><span>Best Performing State:</span> <strong class="text-gold fs-6" id="ccAchBest">-</strong></li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center py-3"><span>Highest Employment:</span> <strong class="text-success fs-6" id="ccAchEmp">-</strong></li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center py-3"><span>Lowest Unemployment:</span> <strong class="text-info fs-6" id="ccAchUnemp">-</strong></li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center py-3"><span>Highest Labour Part.:</span> <strong class="text-primary fs-6" id="ccAchPart">-</strong></li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center py-3"><span>Highest AI Score:</span> <strong class="text-gold fs-6" id="ccAchScore">-</strong></li>
+                                            <li class="list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center py-3 border-bottom-0"><span>Most Critical Hotspot:</span> <strong class="text-danger fs-6" id="ccAchCritical">-</strong></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- 4. AI Decision Priority Panel -->
+                                <div class="col-md-8">
+                                    <div class="card glass-card p-0 overflow-hidden h-100">
+                                        <div class="card-header bg-transparent border-secondary p-3">
+                                            <h5 class="text-danger m-0"><i class="fas fa-tasks me-2 text-white"></i> AI Decision Priority Panel</h5>
+                                        </div>
+                                        <div class="table-responsive h-100" style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table table-dark table-hover mb-0 kma-table align-middle adaptive-priority-table">
+                                                <thead>
+                                                    <tr class="text-gold adaptive-priority-header" style="position: sticky; top: 0; z-index: 1;">
+                                                        <th class="text-start ps-4">State</th>
+                                                        <th>Reason</th>
+                                                        <th>Recommended Action</th>
+                                                        <th class="pe-4 text-end">Priority</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="ccPriorityTableBody">
+                                                    <tr><td colspan="4" class="py-5 text-center text-muted">Processing AI Priorities...</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <!-- 3. Cross-Module Intelligence Summary -->
+                                <div class="col-md-12">
+                                    <div class="card glass-card p-4">
+                                        <h5 class="blue-text mb-3"><i class="fas fa-network-wired me-2 text-white"></i> Cross-Module Intelligence Hub</h5>
+                                        <div class="row g-3" style="font-size: 0.85rem;">
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">Dataset Mgmt:</strong> <span class="text-muted" id="ccCmDataset">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">Data Cleaning:</strong> <span class="text-muted" id="ccCmCleaning">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">EDA:</strong> <span class="text-muted" id="ccCmEda">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">Visualization:</strong> <span class="text-muted" id="ccCmViz">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">COVID Analysis:</strong> <span class="text-muted" id="ccCmCovid">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">Insight Engine:</strong> <span class="text-muted" id="ccCmInsight">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">Scenario Simulator:</strong> <span class="text-muted" id="ccCmScenario">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">State Ranking:</strong> <span class="text-muted" id="ccCmRanking">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">Early Warning:</strong> <span class="text-muted" id="ccCmWarning">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">Policy Lab:</strong> <span class="text-muted" id="ccCmPolicy">-</span></div></div>
+                                            <div class="col-lg-3 col-md-4 col-sm-6"><div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.02);"><strong class="text-gold d-block mb-2">Final Report:</strong> <span class="text-muted" id="ccCmReport">-</span></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7. Final AI Recommendation -->
+                            <div class="card glass-card p-5 mb-4" style="box-shadow: 0 0 30px rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); background: linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(0,0,0,0) 100%);">
+                                <h4 class="gold-text mb-4 text-center" style="font-size: 1.8rem; letter-spacing: 1px;"><i class="fas fa-signature me-2 text-white"></i> Final Executive Directive</h4>
+                                <p class="text-light m-0 text-center mx-auto" style="font-size: 1.15rem; line-height: 1.8; max-width: 900px;" id="ccFinalRec">Generating final strategic directive...</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- K.M.A² Signature Series Modal Panel -->
+    <div class="signature-modal-overlay" id="signatureModal">
+        <div class="signature-modal-content glass-card">
+            <div class="signature-modal-close" id="signatureCloseTop"><i class="fas fa-times"></i></div>
+            
+            <div class="modal-top-section text-center">
+                <i class="fas fa-crown modal-crown"></i>
+                <h2 class="modal-title-gold">K.M.A² Signature Series</h2>
+                <div class="modal-divider"></div>
+            </div>
+            
+            <div class="signature-highlight-strip mt-4 premium-spacing">
+                <p>The <span class="gold-text">K.M.A² Signature Series</span> is the ultimate manifestation of <span class="blue-text">Enterprise</span> software engineering. Built by <span class="gold-text">K.M.A² Technologies</span>, this series delivers an unparalleled <span class="red-text">Premium</span> user experience powered by rigorous computational logic and flawless <span class="blue-text">Architecture</span>. Our approach goes beyond traditional development, prioritizing deep <span class="cyan-text">Intelligence</span>, massive <span class="blue-text">Scalability</span>, and absolute structural perfection to create a truly <span class="red-text">Future-Ready</span> digital platform.</p>
+            </div>
+            
+            <div class="ecosystem-horizontal-panel premium-spacing mt-5">
+                <h3 class="gold-text mb-4 text-center">Intelligent Ecosystem Integration</h3>
+                
+                <div class="glass-strip-card d-flex align-items-center mb-3">
+                    <div class="strip-icon"><i class="fas fa-microchip gold-text"></i></div>
+                    <div class="strip-content">
+                        <h5 class="gold-text m-0">K.M.A² Intelligence Framework</h5>
+                        <p class="text-light m-0 mt-2">The cognitive <span class="blue-text">Framework</span> that processes vast datasets, powering our robust analytical models and driving high <span class="cyan-text">Performance</span> execution across all systems.</p>
+                    </div>
+                </div>
+
+                <div class="glass-strip-card d-flex align-items-center mb-3">
+                    <div class="strip-icon"><i class="fas fa-flask gold-text"></i></div>
+                    <div class="strip-content">
+                        <h5 class="gold-text m-0">K.M.A² Innovation Labs</h5>
+                        <p class="text-light m-0 mt-2">Our dedicated research division relentlessly pushing the frontier of <span class="blue-text">AI</span>-driven engineering and breakthrough <span class="red-text">Innovation</span>.</p>
+                    </div>
+                </div>
+                
+                <div class="glass-strip-card d-flex align-items-center mb-3">
+                    <div class="strip-icon"><i class="fas fa-network-wired gold-text"></i></div>
+                    <div class="strip-content">
+                        <h5 class="gold-text m-0">K.M.A² Nexus</h5>
+                        <p class="text-light m-0 mt-2">The interconnected deployment platform ensuring flawless integration and seamless <span class="cyan-text">Automation</span> across diverse <span class="blue-text">Enterprise</span> environments.</p>
+                    </div>
+                </div>
+
+                <div class="glass-strip-card d-flex align-items-center mb-3">
+                    <div class="strip-icon"><i class="fas fa-server gold-text"></i></div>
+                    <div class="strip-content">
+                        <h5 class="gold-text m-0">K.M.A² Legacy Systems</h5>
+                        <p class="text-light m-0 mt-2">The foundational collection of flagship software, establishing the uncompromising standards for long-term maintainability and professional excellence.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="badges-showcase-section premium-spacing mt-5">
+                <h3 class="gold-text text-center mb-4">Premium Software DNA</h3>
+                <div class="red-accent-line mx-auto mb-4"></div>
+                
+                <div class="row g-3 justify-content-center">
+                    <div class="col-6 col-md-3">
+                        <div class="premium-badge glass-card text-center">
+                            <i class="fas fa-building mb-3 gold-text fs-3"></i>
+                            <h6 class="m-0 text-light">Enterprise Ready</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="premium-badge glass-card text-center">
+                            <i class="fas fa-brain mb-3 blue-text fs-3"></i>
+                            <h6 class="m-0 text-light">AI Optimized</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="premium-badge glass-card text-center">
+                            <i class="fas fa-sitemap mb-3 cyan-text fs-3"></i>
+                            <h6 class="m-0 text-light">Intelligent Architecture</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="premium-badge glass-card text-center">
+                            <i class="fas fa-gem mb-3 red-text fs-3"></i>
+                            <h6 class="m-0 text-light">Premium UX</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="premium-badge glass-card text-center">
+                            <i class="fas fa-bolt mb-3 blue-text fs-3"></i>
+                            <h6 class="m-0 text-light">High Performance</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="premium-badge glass-card text-center">
+                            <i class="fas fa-cubes mb-3 cyan-text fs-3"></i>
+                            <h6 class="m-0 text-light">Modular Design</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="premium-badge glass-card text-center">
+                            <i class="fas fa-shield-alt mb-3 red-text fs-3"></i>
+                            <h6 class="m-0 text-light">Reliable Systems</h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="premium-badge glass-card text-center">
+                            <i class="fas fa-rocket mb-3 gold-text fs-3"></i>
+                            <h6 class="m-0 text-light">Future Ready</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-closing-section mt-5 premium-spacing text-center">
+                <div class="closing-glass-panel glass-card p-4">
+                    <p class="m-0 closing-text">The <span class="gold-text">K.M.A²</span> ecosystem represents a unified collection of premium intelligent software solutions engineered for <span class="blue-text">Performance</span>, <span class="red-text">Innovation</span>, <span class="cyan-text">Scalability</span>, and exceptional user experiences. Excellence is not a goal; it is our fundamental standard.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <button class="btn btn-outline-danger px-4 py-2 fw-bold rounded-pill" id="signatureCloseBottom">Close Panel</button>
+            </div>
+        </div>
+    </div>
+    <!-- Settings Modal Panel -->
+    <div class="signature-modal-overlay" id="settingsModal">
+        <div class="signature-modal-content glass-card" style="max-width: 700px;">
+            <div class="signature-modal-close" id="settingsCloseTop"><i class="fas fa-times"></i></div>
+            
+            <div class="modal-top-section text-center">
+                <i class="fas fa-cog modal-crown"></i>
+                <h2 class="modal-title-gold">Settings</h2>
+                <div class="modal-divider"></div>
+            </div>
+            
+            <!-- SECTION 1 - THEME SETTINGS -->
+            <div class="settings-section mt-4">
+                <h3 class="gold-text mb-3">THEME SETTINGS</h3>
+                <div class="glass-strip-card d-flex align-items-center justify-content-between mb-3">
+                    <div class="strip-content pe-3">
+                        <h5 class="gold-text m-0">Dark Mode</h5>
+                        <p class="text-light m-0 mt-2" style="font-size:1rem; line-height:1.5;">Switch between the premium Dark and Light interface while preserving the <span class="red-text">K.M.A²</span> design language.</p>
+                    </div>
+                    <div class="theme-toggle">
+                        <label class="switch">
+                            <input type="checkbox" id="themeToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2 - SYSTEM INFORMATION -->
+            <div class="settings-section mt-5">
+                <h3 class="gold-text mb-3">SYSTEM INFORMATION</h3>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="glass-strip-card text-center clickable-card h-100" id="aboutDeveloperBtn">
+                            <i class="fas fa-user-tie mb-3 gold-text fs-2"></i>
+                            <h5 class="m-0 text-light">👤 About Developer</h5>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-strip-card text-center clickable-card h-100" id="aboutProjectBtn">
+                            <i class="fas fa-file-code mb-3 gold-text fs-2"></i>
+                            <h5 class="m-0 text-light">📄 About Project</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Developer Intro Overlay -->
+    <div id="devIntroOverlay" class="dev-intro-overlay">
+        <div class="dev-intro-content text-center">
+            <img src="{{ url_for('static', filename='assets/KMA2 Silver Logo.jpeg') }}" class="dev-intro-logo" id="devIntroLogo" alt="KMA2 Logo">
+            <h2 class="dev-intro-text" id="devIntroText">Meet the Architect Behind the Intelligence</h2>
+        </div>
+    </div>
+
+    <!-- About Project Intro Overlay -->
+    <div id="projectIntroOverlay" class="dev-intro-overlay">
+        <div class="dev-intro-content text-center">
+            <img src="{{ url_for('static', filename='assets/KMA2 Silver Logo.jpeg') }}" class="project-intro-logo" alt="KMA2 Logo">
+            <h2 class="dev-intro-text">Exploring the Intelligence Behind the Project...</h2>
+        </div>
+    </div>
+
+    <!-- About Developer Modal -->
+    <div class="signature-modal-overlay sub-modal" id="aboutDeveloperModal">
+        <div class="signature-modal-content glass-card dev-modal-content">
+            <div class="signature-modal-close" id="devCloseTop"><i class="fas fa-times"></i></div>
+            
+            <div class="modal-top-section text-center mb-5">
+                <h2 class="modal-title-gold"><i class="fas fa-laptop-code me-3 text-white"></i>Meet the Intelligence Architect</h2>
+                <h1 class="dev-header-name">Mohammed Asjad Aliyan K</h1>
+                <p class="dev-header-title"><span class="gold-text">Founder</span> • <span class="blue-text">AI Systems Developer</span> • Creator of the <span class="red-text">K.M.A² Ecosystem</span></p>
+                <div class="modal-divider mt-4"></div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12">
+                    <h3 class="dev-section-title"><i class="fas fa-rocket"></i> Engineering Vision</h3>
+                    <div class="glass-strip-card p-4">
+                        <p class="dev-paragraph m-0">The architect's software engineering philosophy is fundamentally built upon the principle that <span class="blue-text">Artificial Intelligence</span> and sophisticated <span class="blue-text">Architecture</span> must seamlessly unite to empower users. Through the creation of <span class="gold-text">K.M.A² Technologies</span>, the vision was to construct a digital environment where raw <span class="blue-text">Data Intelligence</span> transforms into immediate strategic action without friction. By prioritizing clean code, extreme <span class="blue-text">Scalability</span>, and a relentless dedication to logical thinking, the creator ensures that every deployed interface stands as a masterpiece of modern engineering.</p>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <h3 class="dev-section-title"><i class="fas fa-brain"></i> Intelligence Philosophy</h3>
+                    <div class="glass-strip-card p-4">
+                        <p class="dev-paragraph m-0">At the core of the founder's methodology lies the <span class="gold-text">K.M.A² Intelligence Framework</span>. It dictates that true intelligent system design requires far more than algorithms; it requires a deep understanding of user experience and <span class="blue-text">Premium Engineering</span>. By infusing <span class="blue-text">Machine Learning</span> concepts into the <span class="gold-text">K.M.A² Nexus</span>, the developer has pioneered a class of software where <span class="blue-text">Innovation</span> actively anticipates user needs. The result is a highly responsive ecosystem where complex analytical engines feel effortless and perfectly intuitive.</p>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <h3 class="dev-section-title"><i class="fas fa-gem"></i> Premium Development Standards</h3>
+                    <div class="glass-strip-card p-4">
+                        <p class="dev-paragraph mb-3">Refusing to compromise on quality, the architect established the <span class="gold-text">K.M.A² Signature Series</span> to showcase the absolute zenith of premium UI engineering. This standard enforces that every pixel, every shadow, and every animation serves a deliberate purpose in elevating the enterprise experience.</p>
+                        <p class="dev-paragraph m-0">Supported by the unyielding foundation of <span class="gold-text">K.M.A² Legacy Systems</span>, the founder's commitment to <span class="red-text">Premium Engineering</span> ensures that creative problem-solving always yields robust, enterprise-grade software. The dedication to flawless execution guarantees long-term viability and unparalleled digital excellence.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-4">
+                <h3 class="dev-section-title justify-content-center mb-4"><i class="fas fa-cogs"></i> Innovation Mindset</h3>
+                <div class="row g-4 mt-2">
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">🚀</h1>
+                            <h6>Intelligent Engineering</h6>
+                            <p class="text-light small m-0 mt-2">Forging robust backend logic seamlessly with highly responsive interfaces.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">🧠</h1>
+                            <h6>AI Innovation</h6>
+                            <p class="text-light small m-0 mt-2">Integrating advanced computational intelligence into everyday workflows.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">⚙️</h1>
+                            <h6>System Architecture</h6>
+                            <p class="text-light small m-0 mt-2">Designing scalable, future-proof foundations for enterprise software.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">💎</h1>
+                            <h6>Premium Standards</h6>
+                            <p class="text-light small m-0 mt-2">Demanding perfection in visual aesthetics and user experience.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">📊</h1>
+                            <h6>Data Intelligence</h6>
+                            <p class="text-light small m-0 mt-2">Translating massive complex datasets into clear actionable strategy.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">🤖</h1>
+                            <h6>Intelligent Automation</h6>
+                            <p class="text-light small m-0 mt-2">Creating self-optimizing pipelines that eliminate manual friction.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dev-quote-section mt-5">
+                <i class="fas fa-quote-left dev-quote-mark"></i>
+                <p class="dev-quote-text">"True digital excellence begins precisely where profound computational intelligence harmonizes with elegant human-centric architecture."</p>
+                <p class="dev-quote-sub">A guiding principle driving every line of code within the <span class="gold-text">K.M.A²</span> ecosystem.</p>
+            </div>
+
+            <div class="mt-5 pt-3 text-center">
+                <h3 class="dev-section-title justify-content-center mb-4"><i class="fas fa-globe"></i> Future Vision</h3>
+                <p class="dev-paragraph text-center mx-auto" style="max-width: 700px;">Spearheaded by <span class="gold-text">K.M.A² Innovation Labs</span>, the creator continues to explore the cutting edge of digital intelligence, building towards a future driven by these core concepts:</p>
+                
+                <div class="mt-4">
+                    <span class="tech-pill">Artificial Intelligence</span>
+                    <span class="tech-pill">Machine Learning</span>
+                    <span class="tech-pill">Predictive Intelligence</span>
+                    <span class="tech-pill">Data Analytics</span>
+                    <span class="tech-pill">Automation</span>
+                    <span class="tech-pill">Cloud Intelligence</span>
+                    <span class="tech-pill">Scalable Systems</span>
+                    <span class="tech-pill">Modern UI Engineering</span>
+                    <span class="tech-pill">Human-Centered Design</span>
+                    <span class="tech-pill">Premium Software</span>
+                    <span class="tech-pill"><span class="gold-text fw-bold">K.M.A² Innovation Labs</span></span>
+                    <span class="tech-pill"><span class="gold-text fw-bold">K.M.A² Nexus</span></span>
+                    <span class="tech-pill"><span class="gold-text fw-bold">K.M.A² Technologies</span></span>
+                    <span class="tech-pill"><span class="gold-text fw-bold">K.M.A² Intelligence Framework</span></span>
+                    <span class="tech-pill"><span class="gold-text fw-bold">K.M.A² Legacy Systems</span></span>
+                    <span class="tech-pill"><span class="gold-text fw-bold">K.M.A² Signature Series</span></span>
+                </div>
+            </div>
+
+            <div class="text-center mt-5 mb-4">
+                <button class="btn btn-outline-danger px-5 py-3 fw-bold rounded-pill" id="devCloseBottom" style="font-family: 'Orbitron', sans-serif; letter-spacing: 1px; box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);">Close Developer Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Project Modal -->
+    <div class="signature-modal-overlay sub-modal" id="aboutProjectModal">
+        <div class="signature-modal-content glass-card dev-modal-content">
+            <div class="signature-modal-close" id="projectCloseTop"><i class="fas fa-times"></i></div>
+            
+            <div class="modal-top-section text-center mb-5">
+                <h2 class="modal-title-gold"><i class="fas fa-chart-pie me-3 text-white"></i>Unemployment Intelligence System</h2>
+                <h1 class="dev-header-name" style="font-size: 1.8rem;">AI-Powered Data Analytics Platform</h1>
+                <p class="dev-header-title"><span class="blue-text">Advanced Visualization</span> • <span class="gold-text">Statistical Intelligence</span> • <span class="red-text">Decision Support</span></p>
+                <div class="modal-divider mt-4"></div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12">
+                    <h3 class="dev-section-title"><i class="fas fa-eye"></i> Project Vision</h3>
+                    <div class="glass-strip-card p-4">
+                        <p class="dev-paragraph m-0">The <span class="gold-text">Unemployment Intelligence System</span> is an advanced, <span class="blue-text">AI-powered</span> analytics platform designed to provide deep structural insights into massive economic workforce fluctuations. Engineered with intensely interactive dashboards and powerful <span class="blue-text">Data Visualization</span>, it delivers an unprecedented level of statistical clarity.</p>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <h3 class="dev-section-title"><i class="fas fa-brain"></i> Intelligence Philosophy</h3>
+                    <div class="glass-strip-card p-4">
+                        <p class="dev-paragraph m-0">By actively transforming raw global datasets into comprehensive <span class="red-text">Executive reporting</span> and intelligent, highly accurate <span class="blue-text">Decision support</span>, the platform bridges the critical gap between raw data and actionable strategy. Driven relentlessly by the underlying <span class="gold-text">K.M.A² Intelligence Framework</span>, the system guarantees that every single interaction meets the absolute highest standards of enterprise excellence.</p>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <h3 class="dev-section-title"><i class="fas fa-server"></i> Data Analytics Architecture</h3>
+                    <div class="glass-strip-card p-4">
+                        <p class="dev-paragraph m-0">Built upon the <span class="gold-text">K.M.A² Legacy Systems</span>, the architecture effortlessly handles millions of data points, ensuring <span class="blue-text">Real-Time Insights</span> and <span class="red-text">Predictive Intelligence</span>. This robust backend perfectly complements the <span class="red-text">Premium UI</span>, maintaining extreme <span class="blue-text">Scalability</span> across all reporting engines.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-4">
+                <h3 class="dev-section-title justify-content-center mb-4"><i class="fas fa-th-large"></i> System Capabilities</h3>
+                <div class="row g-4 mt-2">
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">📊</h1>
+                            <h6>Data Analytics</h6>
+                            <p class="text-light small m-0 mt-2">Processing large-scale workforce data into actionable metrics.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">📉</h1>
+                            <h6>Unemployment Trends</h6>
+                            <p class="text-light small m-0 mt-2">Tracking historical fluctuations across multiple global demographics.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">🌍</h1>
+                            <h6>Economic Insights</h6>
+                            <p class="text-light small m-0 mt-2">Evaluating regional impacts and global financial health.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">📈</h1>
+                            <h6>Interactive Visualization</h6>
+                            <p class="text-light small m-0 mt-2">Delivering highly responsive and detailed exploratory charts.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">🧠</h1>
+                            <h6>Statistical Intelligence</h6>
+                            <p class="text-light small m-0 mt-2">Utilizing advanced algorithms for deep structural analysis.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dev-interactive-card">
+                            <h1 class="m-0">⚡</h1>
+                            <h6>Decision Support</h6>
+                            <p class="text-light small m-0 mt-2">Empowering executives with real-time, data-backed strategies.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dev-quote-section mt-5">
+                <i class="fas fa-quote-left dev-quote-mark"></i>
+                <p class="dev-quote-text">"Transforming complex unemployment datasets into meaningful economic intelligence through modern analytics and interactive visualization."</p>
+            </div>
+
+            <div class="mt-5 pt-3 text-center">
+                <h3 class="dev-section-title justify-content-center mb-4"><i class="fas fa-microchip"></i> Technology Stack</h3>
+                
+                <div class="mt-4">
+                    <span class="tech-pill">Python</span>
+                    <span class="tech-pill">Pandas</span>
+                    <span class="tech-pill">NumPy</span>
+                    <span class="tech-pill">Matplotlib</span>
+                    <span class="tech-pill">Seaborn</span>
+                    <span class="tech-pill">Plotly</span>
+                    <span class="tech-pill">Machine Learning</span>
+                    <span class="tech-pill">Data Analytics</span>
+                    <span class="tech-pill">Statistical Analysis</span>
+                    <span class="tech-pill">Interactive Dashboard</span>
+                    <span class="tech-pill">Data Visualization</span>
+                    <span class="tech-pill">Economic Intelligence</span>
+                    <span class="tech-pill">Real-Time Insights</span>
+                    <span class="tech-pill">Responsive UI</span>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-5 pt-3">
+                <div class="col-md-4 text-center">
+                    <p class="text-muted small m-0 text-uppercase tracking-wider">Powered By</p>
+                    <h6 class="gold-text fw-bold mt-2">K.M.A² Intelligence Framework</h6>
+                </div>
+                <div class="col-md-4 text-center">
+                    <p class="text-muted small m-0 text-uppercase tracking-wider">Part Of</p>
+                    <h6 class="gold-text fw-bold mt-2">K.M.A² Signature Series</h6>
+                </div>
+                <div class="col-md-4 text-center">
+                    <p class="text-muted small m-0 text-uppercase tracking-wider">Developed Within</p>
+                    <h6 class="gold-text fw-bold mt-2">K.M.A² Innovation Labs</h6>
+                </div>
+            </div>
+            
+            <div class="mt-5 glass-strip-card" style="border: 1px solid rgba(220, 38, 38, 0.4); padding: 2.5rem; border-radius: 12px; transition: transform 0.4s ease, box-shadow 0.4s ease; cursor: default;" onmouseover="this.style.transform='scale(1.02) translateY(-5px)'; this.style.boxShadow='0 15px 35px rgba(239, 68, 68, 0.25), inset 0 0 20px rgba(239, 68, 68, 0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+                <h3 class="dev-section-title justify-content-center mb-4"><i class="fas fa-trophy text-warning"></i> 🏆 Project Recognition</h3>
+                
+                <p class="dev-paragraph text-center">This project was professionally designed and developed as part of the <span class="gold-text fw-bold">CodeAlpha</span> Internship, demonstrating practical implementation of modern <span class="blue-text fw-bold">Data Analytics</span>, visualization, <span class="gold-text fw-bold">Machine Learning</span> concepts, and intelligent <span class="red-text fw-bold">Unemployment Analysis</span> using real-world datasets.</p>
+                
+                <p class="dev-paragraph text-center">It successfully demonstrates practical software engineering skills, analytical thinking, dashboard development, visualization techniques, <span class="red-text fw-bold">Predictive Intelligence</span>, and professional UI/UX standards expected in an enterprise internship environment. This application is a proud addition to the <span class="gold-text fw-bold">K.M.A² Signature Series</span>, driven by the <span class="blue-text fw-bold">K.M.A² Intelligence Framework</span>.</p>
+                
+                <div class="d-flex flex-wrap justify-content-center mt-4 mb-4 gap-3">
+                    <span class="recognition-badge">🏅 Developed for <span class="gold-text">CodeAlpha</span></span>
+                    <span class="recognition-badge">📊 Real-World Analytics Project</span>
+                    <span class="recognition-badge">💼 Professional Portfolio Project</span>
+                    <span class="recognition-badge">🧠 <span class="blue-text">AI</span> & Data Science Implementation</span>
+                </div>
+                
+                <div class="modal-divider mt-4 mb-4 mx-auto" style="width: 60%; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);"></div>
+                
+                <p class="text-center m-0" style="font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; color: #f8fafc; font-style: italic; animation: fadeIn 2s ease-in-out;">
+                    "Proudly developed as part of the <span class="gold-text fw-bold">CodeAlpha</span> Internship, showcasing practical implementation of intelligent unemployment analytics, modern visualization, predictive modeling, and premium software engineering practices."
+                </p>
+            </div>
+            
+            <div class="text-center mt-5 mb-4">
+                <button class="btn btn-outline-danger px-5 py-3 fw-bold rounded-pill" id="projectCloseBottom" style="font-family: 'Orbitron', sans-serif; letter-spacing: 1px; box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);">Close About Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KMA2 Logo Information Modal -->
+    <div class="signature-modal-overlay" id="logoInfoModal">
+        <div class="signature-modal-content glass-card p-0" style="max-width: 1000px; overflow: hidden; display: flex; align-items: stretch; flex-direction: row; min-height: 600px;">
+            <!-- Left Side: Logo -->
+            <div class="logo-modal-left" style="flex: 0 0 40%; background: rgba(0, 0, 0, 0.4); border-right: 1px solid rgba(220, 38, 38, 0.2); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                <!-- Decorative background elements -->
+                <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(220,38,38,0.15) 0%, transparent 70%); animation: slowSpin 20s linear infinite;"></div>
+                
+                <img src="{{ url_for('static', filename='assets/KMA2 Silver Logo.jpeg') }}" alt="KMA2 Logo Large" style="width: 220px; border-radius: 50%; box-shadow: 0 0 50px rgba(220, 38, 38, 0.8); position: relative; z-index: 2; animation: floatLogo 3s ease-in-out infinite; border: 2px solid rgba(220,38,38,0.5);">
+            </div>
+
+            <!-- Right Side: Content -->
+            <div class="logo-modal-right p-5" style="flex: 1; display: flex; flex-direction: column; overflow-y: auto;">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h2 class="gold-text mb-1" style="font-family: 'Orbitron', sans-serif; letter-spacing: 1px;">📊 K.M.A² Signature Series</h2>
+                        <h5 class="text-muted" style="font-family: 'Rajdhani', sans-serif;">Powered by the K.M.A² Intelligence Framework</h5>
+                    </div>
+                    <div class="signature-modal-close" id="logoInfoCloseTop" style="position: static; font-size: 1.5rem;"><i class="fas fa-times"></i></div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="text-white mb-2" style="font-family: 'Orbitron', sans-serif; font-weight: 600;">Advanced Unemployment Intelligence Platform</h4>
+                    <p class="blue-text mb-1 fw-bold">Professional Data Analytics System</p>
+                    <p class="red-text m-0 fw-bold">Interactive Economic Visualization</p>
+                </div>
+
+                <!-- 4 Feature Cards -->
+                <div class="row g-3 mb-4 flex-grow-1">
+                    <!-- Card 1 -->
+                    <div class="col-md-6">
+                        <div class="dev-interactive-card" style="padding: 1.5rem; text-align: left;">
+                            <h6 class="gold-text m-0 mb-3"><i class="fas fa-gem me-2 red-text"></i>Signature Series Project</h6>
+                            <ul class="text-light m-0" style="padding-left: 1.2rem; line-height: 1.8;">
+                                <li>Premium Quality</li>
+                                <li>Enterprise UI</li>
+                                <li>Interactive Dashboard</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="col-md-6">
+                        <div class="dev-interactive-card" style="padding: 1.5rem; text-align: left;">
+                            <h6 class="gold-text m-0 mb-3"><i class="fas fa-brain me-2 blue-text"></i>Intelligence Framework</h6>
+                            <ul class="text-light m-0" style="padding-left: 1.2rem; line-height: 1.8;">
+                                <li>Data Analytics</li>
+                                <li>Statistical Intelligence</li>
+                                <li>Visualization Engine</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="col-md-6">
+                        <div class="dev-interactive-card" style="padding: 1.5rem; text-align: left;">
+                            <h6 class="gold-text m-0 mb-3"><i class="fas fa-shield-alt me-2 red-text"></i>Innovation Labs</h6>
+                            <ul class="text-light m-0" style="padding-left: 1.2rem; line-height: 1.8;">
+                                <li>Research</li>
+                                <li>Dashboard Engineering</li>
+                                <li>Real World Analytics</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="col-md-6">
+                        <div class="dev-interactive-card" style="padding: 1.5rem; text-align: left;">
+                            <h6 class="gold-text m-0 mb-3"><i class="fas fa-building me-2 blue-text"></i>CodeAlpha Project</h6>
+                            <ul class="text-light m-0" style="padding-left: 1.2rem; line-height: 1.8;">
+                                <li>Developed for CodeAlpha</li>
+                                <li>Professional Internship Project</li>
+                                <li>Real World Data Analytics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dev-quote-section p-3 mt-4" style="border-top: 1px solid rgba(220,38,38,0.2);">
+                    <i class="fas fa-quote-left dev-quote-mark" style="font-size: 3rem; top: 5px;"></i>
+                    <p class="dev-quote-text" style="font-size: 1.2rem; margin-top: 1.5rem;">"Transforming unemployment statistics into meaningful intelligence through premium analytics, interactive visualization, and data-driven decision making."</p>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-outline-danger px-5 py-3 fw-bold rounded-pill" id="logoInfoCloseBottom" style="font-family: 'Orbitron', sans-serif; letter-spacing: 1px; box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);">Close Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Executive Access Modal -->
+    <div class="signature-modal-overlay sub-modal" id="execAccessModal">
+        <div class="signature-modal-content glass-card p-0" style="max-width: 800px; display: flex; flex-direction: column;">
+            <div class="p-4" style="background: rgba(220, 38, 38, 0.1); border-bottom: 1px solid rgba(220, 38, 38, 0.3); display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="m-0 text-white" style="font-family: 'Orbitron', sans-serif;"><i class="fas fa-lock text-danger me-2"></i> Executive Access Verified</h3>
+                <div class="signature-modal-close" id="execAccessCloseTop" style="position: static; margin: 0;"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="p-5 flex-grow-1">
+                <h4 class="gold-text mb-4">Command Center Active</h4>
+                <p class="text-light fs-5" style="line-height: 1.8;">You have securely authenticated into the K.M.A² Intelligence Framework's Executive Command Center.</p>
+                <p class="text-muted" style="font-size: 1.1rem; line-height: 1.6;">This module aggregates all critical data points, predictive insights, and early warning markers across the entire dataset to provide a high-level strategic overview. All metrics presented are generated in real-time by the underlying analytical engine.</p>
+                
+                <div class="dev-interactive-card mt-4 p-4 text-center">
+                    <h5 class="blue-text m-0"><i class="fas fa-shield-alt me-2"></i> Security Level: Maximum</h5>
+                    <p class="text-light mt-2 mb-0 small">Read-only access granted for strategic review.</p>
+                </div>
+            </div>
+            <div class="p-4 text-center" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                <button class="btn btn-outline-danger px-5 py-2 fw-bold rounded-pill" id="execAccessCloseBottom" style="font-family: 'Orbitron', sans-serif; letter-spacing: 1px; box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);">Close Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll To Top Button -->
+    <button id="scrollToTopBtn" title="Go to top"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
